@@ -4,6 +4,8 @@
 #include <QtWidgets/QWidget>
 #include <qpushbutton.h>
 #include <qlayout.h>
+#include <qpixmap.h>
+#include <qlabel.h>
 #include <qvector.h>
 #include "EdgeDetectionAlg.h"
 
@@ -17,16 +19,15 @@ public:
 
 private slots:
     void startProccess();
+    void addImage();
 
 private:
-    QVector<QPushButton*> original;
-    QVector<QPushButton*> filteredCPU;
-    QVector<QPushButton*> filteredGPU;
-    QPushButton* startProccessButton;
-    QVBoxLayout* mainLayout;
-    QHBoxLayout* originalLayout;
-    QHBoxLayout* filteredCPULayout;
-    QHBoxLayout* filteredGPULayout;
+    QIcon* imageIcon = new QIcon(QPixmap(":/EdgeDetection/plus.jpg"));
+    QLabel* title, *cpuTitle, *gpuTitle;
+    QVector<QPushButton*> original, filteredCPU, filteredGPU;
+    QPushButton* startProccessButton, *resetButton;
+    QVBoxLayout* mainLayout, * filteredCPULayout, * filteredGPULayout;
+    QHBoxLayout* originalLayout, *filteredCPUImageLayout, *filteredGPUImageLayout, *headerLayout;
 };
 
 #endif EDGEDETECTION_H
