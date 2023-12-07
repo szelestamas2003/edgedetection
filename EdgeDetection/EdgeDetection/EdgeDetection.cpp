@@ -1,5 +1,6 @@
 #include "EdgeDetection.h"
 #include <qfiledialog.h>
+#include <qstringlist.h>
 
 EdgeDetection::EdgeDetection(QWidget *parent)
     : QWidget(parent)
@@ -20,8 +21,9 @@ EdgeDetection::EdgeDetection(QWidget *parent)
     for (int i = 0; i < 5; i++) {
         QPushButton* b = new QPushButton(this);
         b->setIcon(*imageIcon);
-        b->setIconSize(QSize(100, 100));
+        b->setIconSize(QSize(35, 35));
         b->setFixedSize(QSize(100, 100));
+        b->setCursor(QCursor(Qt::CursorShape::PointingHandCursor));
         originalLayout->addWidget(b);
         original.push_back(b);
         connect(b, &QPushButton::clicked, this, &EdgeDetection::addImage);
@@ -44,6 +46,8 @@ EdgeDetection::EdgeDetection(QWidget *parent)
         filteredGPUImageLayout->addWidget(b);
         filteredGPU.push_back(b);
     }
+
+    fileNames.resize(original.size());
 
     filteredCPULayout = new QVBoxLayout();
     cpuTitle = new QLabel("Detected on CPU:", this);
@@ -72,16 +76,26 @@ EdgeDetection::~EdgeDetection()
 
 void EdgeDetection::addImage()
 {
-    QPushButton* button = qobject_cast<QPushButton*>(sender());
-    QString fileName =  QFileDialog::getOpenFileName(this, "Select an image", "", "Images (*.png, *.gif, *.jpg)");
-    if (!fileName.isEmpty()) {
-
+    QPushButton* senderButton = qobject_cast<QPushButton*>(sender());
+    QStringList fileNames =  QFileDialog::getOpenFileNames(this, "Select an image", "", "Images (*.png, *.gif, *.jpg)");
+    int index = original.indexOf(senderButton);
+    if (!fileNames.isEmpty()) {
+        int imageCount = fileNames.count();
+        int buttons = original.size();
+        for (int i = 0; i < buttons && i < imageCount; i++) {
+            QPushButton* button = original[(index + i) % buttons];
+            button->setIcon(QIcon(fileNames[i]));
+            button->setIconSize(button->size());
+            button->setFlat(true);
+        }
     }
 }
 
 void EdgeDetection::startProccess()
 {
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < original.size(); i++) {
+        if (!(original[i]->iconSize() == QSize(35, 35))) {
 
+        }
     }
 }

@@ -22,9 +22,10 @@ private slots:
     void addImage();
 
 private:
-    QIcon* imageIcon = new QIcon(QPixmap(":/EdgeDetection/plus.jpg"));
+    QIcon* imageIcon = new QIcon(QPixmap(":/EdgeDetection/plus_png.png"));
     QLabel* title, *cpuTitle, *gpuTitle;
     QVector<QPushButton*> original, filteredCPU, filteredGPU;
+    QStringList fileNames;
     QPushButton* startProccessButton, *resetButton;
     QVBoxLayout* mainLayout, * filteredCPULayout, * filteredGPULayout;
     QHBoxLayout* originalLayout, *filteredCPUImageLayout, *filteredGPUImageLayout, *headerLayout;

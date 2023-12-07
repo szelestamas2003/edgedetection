@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/EdgeDetection">
-        <file>plus.png</file>
-        <file>plus.jpg</file>
+        <file>plus_png.png</file>
     </qresource>
 </RCC>
