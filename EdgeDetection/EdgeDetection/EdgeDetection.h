@@ -19,6 +19,7 @@ public:
 
 private slots:
     void startProccess();
+    void resetButtons();
     void addImage();
 
 private:
@@ -27,7 +28,7 @@ private:
     QVector<QPushButton*> original, filteredCPU, filteredGPU;
     QStringList fileNames;
     QPushButton* startProccessButton, *resetButton;
-    QVBoxLayout* mainLayout, * filteredCPULayout, * filteredGPULayout;
+    QVBoxLayout* mainLayout, * filteredCPULayout, * filteredGPULayout, *buttonLayout;
     QHBoxLayout* originalLayout, *filteredCPUImageLayout, *filteredGPUImageLayout, *headerLayout;
 };
 

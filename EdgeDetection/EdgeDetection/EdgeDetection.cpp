@@ -6,6 +6,7 @@ EdgeDetection::EdgeDetection(QWidget *parent)
     : QWidget(parent)
 {
     startProccessButton = new QPushButton("Start", this);
+    resetButton = new QPushButton("Reset", this);
     title = new QLabel("EdgeDetection", this);
     title->setFont(QFont("Times New Roman", 40, QFont::Bold));
     title->setMargin(10);
@@ -15,15 +16,18 @@ EdgeDetection::EdgeDetection(QWidget *parent)
     filteredCPUImageLayout = new QHBoxLayout();
     filteredGPUImageLayout = new QHBoxLayout();
     headerLayout = new QHBoxLayout();
+    buttonLayout = new QVBoxLayout();
+    buttonLayout->addWidget(startProccessButton);
+    buttonLayout->addWidget(resetButton);
     headerLayout->addWidget(title);
-    headerLayout->addWidget(startProccessButton);
+    headerLayout->addLayout(buttonLayout);
     
     for (int i = 0; i < 5; i++) {
         QPushButton* b = new QPushButton(this);
         b->setIcon(*imageIcon);
         b->setIconSize(QSize(35, 35));
         b->setFixedSize(QSize(100, 100));
-        b->setCursor(QCursor(Qt::CursorShape::PointingHandCursor));
+        b->setCursor(Qt::CursorShape::PointingHandCursor);
         originalLayout->addWidget(b);
         original.push_back(b);
         connect(b, &QPushButton::clicked, this, &EdgeDetection::addImage);
@@ -34,6 +38,7 @@ EdgeDetection::EdgeDetection(QWidget *parent)
         b->setFixedSize(QSize(100, 100));
         b->setDisabled(true);
         b->setFlat(true);
+        b->setCursor(Qt::CursorShape::PointingHandCursor);
         filteredCPUImageLayout->addWidget(b);
         filteredCPU.push_back(b);
     }
@@ -43,6 +48,7 @@ EdgeDetection::EdgeDetection(QWidget *parent)
         b->setDisabled(true);
         b->setFlat(true);
         b->setFixedSize(QSize(100, 100));
+        b->setCursor(Qt::CursorShape::PointingHandCursor);
         filteredGPUImageLayout->addWidget(b);
         filteredGPU.push_back(b);
     }
@@ -69,10 +75,32 @@ EdgeDetection::EdgeDetection(QWidget *parent)
     setLayout(mainLayout);
 
     connect(startProccessButton, &QPushButton::clicked, this, &EdgeDetection::startProccess);
+    connect(resetButton, &QPushButton::clicked, this, &EdgeDetection::resetButtons);
 }
 
 EdgeDetection::~EdgeDetection()
 {}
+
+void EdgeDetection::resetButtons()
+{
+    for (QPushButton* b : original) {
+        b->setIcon(*imageIcon);
+        b->setFlat(false);
+        b->setIconSize(QSize(35, 35));
+    }
+
+    for (QPushButton* b : filteredCPU) {
+        b->setIcon(QIcon());
+        b->setDisabled(true);
+    }
+
+    for (QPushButton* b : filteredGPU) {
+        b->setIcon(QIcon());
+        b->setDisabled(true);
+    }
+
+    fileNames.clear();
+}
 
 void EdgeDetection::addImage()
 {
@@ -100,7 +128,6 @@ void EdgeDetection::startProccess()
             filteredCPU[i]->setIcon(QIcon(QPixmap::fromImage(QImage(image.data, image.cols, image.rows, image.step, QImage::Format_Grayscale8))));
             filteredCPU[i]->setIconSize(filteredCPU[i]->size());
             filteredCPU[i]->setEnabled(true);
-            filteredCPU[i]->setCursor(Qt::CursorShape::PointingHandCursor);
         }
     }
 }
