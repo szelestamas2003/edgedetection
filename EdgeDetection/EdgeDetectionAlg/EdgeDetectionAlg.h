@@ -1,14 +1,15 @@
 #ifndef EDGEDETECTIONALG_H
 #define EDGEDETECTIONALG_H
 
-//#include <opencv2/core/core.hpp>
-//#include <opencv2/imgcodecs.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/imgcodecs.hpp>
 
 namespace EdgeDetectionAlg
 {
-	void EdgeDetectionOnCPU();
+	std::vector<cv::Mat> EdgeDetectionOnCPU(std::vector<std::string> fileNames);
 
-	extern "C" void EdgeDetectionOnGPU();
+	std::vector<cv::Mat> EdgeDetectionOnGPU(std::vector<std::string> fileNames);
 };
 
 #endif EDGEDETECTIONALG_H
