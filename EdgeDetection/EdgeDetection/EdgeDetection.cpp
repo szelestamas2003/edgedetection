@@ -1,5 +1,6 @@
 #include "EdgeDetection.h"
 #include <qfiledialog.h>
+#include "ImageWindow.h"
 #include <qstringlist.h>
 
 EdgeDetection::EdgeDetection(QWidget *parent)
@@ -41,6 +42,7 @@ EdgeDetection::EdgeDetection(QWidget *parent)
         b->setCursor(Qt::CursorShape::PointingHandCursor);
         filteredCPUImageLayout->addWidget(b);
         filteredCPU.push_back(b);
+        connect(b, &QPushButton::clicked, this, &EdgeDetection::showImage);
     }
 
     for (int i = 0; i < 5; i++) {
@@ -51,9 +53,12 @@ EdgeDetection::EdgeDetection(QWidget *parent)
         b->setCursor(Qt::CursorShape::PointingHandCursor);
         filteredGPUImageLayout->addWidget(b);
         filteredGPU.push_back(b);
+        connect(b, &QPushButton::clicked, this, &EdgeDetection::showImage);
     }
 
     fileNames.resize(original.size());
+    filteredImagesCPU.resize(original.size());
+    filteredImagesGPU.resize(original.size());
 
     filteredCPULayout = new QVBoxLayout();
     cpuTitle = new QLabel("Detected on CPU:", this);
@@ -120,12 +125,28 @@ void EdgeDetection::addImage()
     }
 }
 
+void EdgeDetection::showImage()
+{
+    QPushButton* senderButton = qobject_cast<QPushButton*>(sender());
+    int index;
+    ImageWindow* window;
+    if ((index = filteredCPU.indexOf(senderButton)) != -1) {
+        window = new ImageWindow(filteredImagesCPU[index], this);
+    }
+    else if ((index = filteredGPU.indexOf(senderButton)) != -1) {
+        window = new ImageWindow(filteredImagesGPU[index], this);
+    }
+    window->exec();
+}
+
 void EdgeDetection::startProccess()
 {
     for (int i = 0; i < original.size(); i++) {
         if (!(original[i]->iconSize() == QSize(35, 35))) {
             cv::Mat image = EdgeDetectionAlg::EdgeDetectionOnCPU(fileNames[i].toStdString());
-            filteredCPU[i]->setIcon(QIcon(QPixmap::fromImage(QImage(image.data, image.cols, image.rows, image.step, QImage::Format_Grayscale8))));
+            QPixmap imagePixmap = QPixmap::fromImage(QImage(image.data, image.cols, image.rows, image.step, QImage::Format_Grayscale8));
+            filteredImagesCPU[i] = imagePixmap;
+            filteredCPU[i]->setIcon(QIcon(imagePixmap));
             filteredCPU[i]->setIconSize(filteredCPU[i]->size());
             filteredCPU[i]->setEnabled(true);
         }
