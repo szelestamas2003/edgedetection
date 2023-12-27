@@ -21,11 +21,13 @@ private slots:
     void startProccess();
     void resetButtons();
     void addImage();
+    void showImage();
 
 private:
     QIcon* imageIcon = new QIcon(QPixmap(":/EdgeDetection/plus_png.png"));
     QLabel* title, *cpuTitle, *gpuTitle;
     QVector<QPushButton*> original, filteredCPU, filteredGPU;
+    QVector<QPixmap> filteredImagesCPU, filteredImagesGPU;
     QStringList fileNames;
     QPushButton* startProccessButton, *resetButton;
     QVBoxLayout* mainLayout, * filteredCPULayout, * filteredGPULayout, *buttonLayout;

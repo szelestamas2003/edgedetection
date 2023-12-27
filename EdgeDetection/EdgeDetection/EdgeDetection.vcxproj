@@ -114,12 +114,16 @@
     <QtRcc Include="EdgeDetection.qrc" />
     <QtMoc Include="EdgeDetection.h" />
     <ClCompile Include="EdgeDetection.cpp" />
+    <ClCompile Include="ImageWindow.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EdgeDetectionAlg\EdgeDetectionAlg.vcxproj">
       <Project>{d06da6cf-5920-4d0b-b869-e7d05d7ba760}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="ImageWindow.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
