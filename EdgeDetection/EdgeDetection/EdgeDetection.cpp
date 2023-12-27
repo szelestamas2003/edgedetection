@@ -85,6 +85,7 @@ void EdgeDetection::addImage()
         for (int i = 0; i < buttons && i < imageCount; i++) {
             QPushButton* button = original[(index + i) % buttons];
             button->setIcon(QIcon(fileNames[i]));
+            this->fileNames[i] = fileNames[i];
             button->setIconSize(button->size());
             button->setFlat(true);
         }
@@ -95,7 +96,11 @@ void EdgeDetection::startProccess()
 {
     for (int i = 0; i < original.size(); i++) {
         if (!(original[i]->iconSize() == QSize(35, 35))) {
-
+            cv::Mat image = EdgeDetectionAlg::EdgeDetectionOnCPU(fileNames[i].toStdString());
+            filteredCPU[i]->setIcon(QIcon(QPixmap::fromImage(QImage(image.data, image.cols, image.rows, image.step, QImage::Format_Grayscale8))));
+            filteredCPU[i]->setIconSize(filteredCPU[i]->size());
+            filteredCPU[i]->setEnabled(true);
+            filteredCPU[i]->setCursor(Qt::CursorShape::PointingHandCursor);
         }
     }
 }
