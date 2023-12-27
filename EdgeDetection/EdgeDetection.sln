@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.7.34302.85
+VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EdgeDetection", "EdgeDetection\EdgeDetection.vcxproj", "{D1BB428D-3161-4A34-A3F6-FADB4F90B3B0}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EdgeDetection", "EdgeDetection\EdgeDetection.vcxproj", "{424F0D6F-95A3-4327-B8F3-5B4177B161C3}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EdgeDetectionAlg", "EdgeDetectionAlg\EdgeDetectionAlg.vcxproj", "{40D2FBD6-58E5-4617-AC61-587213E7F768}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EdgeDetectionAlg", "EdgeDetectionAlg\EdgeDetectionAlg.vcxproj", "{D06DA6CF-5920-4D0B-B869-E7D05D7BA760}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,19 +13,19 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D1BB428D-3161-4A34-A3F6-FADB4F90B3B0}.Debug|x64.ActiveCfg = Debug|x64
-		{D1BB428D-3161-4A34-A3F6-FADB4F90B3B0}.Debug|x64.Build.0 = Debug|x64
-		{D1BB428D-3161-4A34-A3F6-FADB4F90B3B0}.Release|x64.ActiveCfg = Release|x64
-		{D1BB428D-3161-4A34-A3F6-FADB4F90B3B0}.Release|x64.Build.0 = Release|x64
-		{40D2FBD6-58E5-4617-AC61-587213E7F768}.Debug|x64.ActiveCfg = Debug|x64
-		{40D2FBD6-58E5-4617-AC61-587213E7F768}.Debug|x64.Build.0 = Debug|x64
-		{40D2FBD6-58E5-4617-AC61-587213E7F768}.Release|x64.ActiveCfg = Release|x64
-		{40D2FBD6-58E5-4617-AC61-587213E7F768}.Release|x64.Build.0 = Release|x64
+		{424F0D6F-95A3-4327-B8F3-5B4177B161C3}.Debug|x64.ActiveCfg = Debug|x64
+		{424F0D6F-95A3-4327-B8F3-5B4177B161C3}.Debug|x64.Build.0 = Debug|x64
+		{424F0D6F-95A3-4327-B8F3-5B4177B161C3}.Release|x64.ActiveCfg = Release|x64
+		{424F0D6F-95A3-4327-B8F3-5B4177B161C3}.Release|x64.Build.0 = Release|x64
+		{D06DA6CF-5920-4D0B-B869-E7D05D7BA760}.Debug|x64.ActiveCfg = Debug|x64
+		{D06DA6CF-5920-4D0B-B869-E7D05D7BA760}.Debug|x64.Build.0 = Debug|x64
+		{D06DA6CF-5920-4D0B-B869-E7D05D7BA760}.Release|x64.ActiveCfg = Release|x64
+		{D06DA6CF-5920-4D0B-B869-E7D05D7BA760}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {B39C4E0F-CE99-4884-9EF0-5953DEF3C29D}
+		SolutionGuid = {530A87B0-27EE-47C8-85D0-BD4B26EB98ED}
 	EndGlobalSection
 EndGlobal
