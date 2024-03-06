@@ -59,7 +59,10 @@
     </Link>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
+      <Defines>%(Defines)</Defines>
     </CudaCompile>
+    <CudaLink />
+    <CudaLink />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -81,13 +84,19 @@
     </Link>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
+      <Defines>%(Defines)</Defines>
     </CudaCompile>
+    <CudaLink />
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="EdgeDetectionAlg.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="cudaHeader.h" />
     <ClInclude Include="EdgeDetectionAlg.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="EdgeDetection.cu" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
