@@ -1,6 +1,7 @@
 #include "EdgeDetectionAlg.h"
 #include <cmath>
-#include <opencv2/highgui/highgui.hpp>
+#include <cuda_runtime.h>
+#include "cudaHeader.h"
 
 namespace {
 	float** CreatingGaussFilter(int size = 5, float omega = 1) {
@@ -19,8 +20,8 @@ namespace {
 
 cv::Mat EdgeDetectionAlg::EdgeDetectionOnCPU(std::string fileName)
 {
-	float** gaussFilter = CreatingGaussFilter(5, 1);
-	cv::Mat image = cv::imread(fileName, cv::IMREAD_GRAYSCALE);
+	cv::Mat image;
+	image = cv::imread(fileName, cv::IMREAD_GRAYSCALE);
 
 	cv::Mat result;
 	cv::GaussianBlur(image, result, cv::Size(5, 5), 1.3, 1.3, cv::BorderTypes::BORDER_CONSTANT);
@@ -31,8 +32,8 @@ cv::Mat EdgeDetectionAlg::EdgeDetectionOnCPU(std::string fileName)
 	image = result;
 	for (int i = 0; i < result.cols; i++) {
 		for (int j = 0; j < result.rows; j++) {
-			result.at<uchar>(j, i) = hypot(dx.at<uchar>(j, i), dy.at<uchar>(j, i));
-			double dirP = atan2(dy.at<uchar>(j, i), dx.at<uchar>(j, i));
+			result.at<double>(j, i) = hypot(dx.at<double>(j, i), dy.at<double>(j, i));
+			double dirP = atan2(dy.at<double>(j, i), dx.at<double>(j, i));
 			if ((dirP >= 0 && dirP < 22.5) || (dirP > 157.5 && dirP <= 180))
 				dir.at<uint8_t>(j, i) = 0;
 			else if (dirP >= 22.5 && dirP < 67.5)
@@ -49,71 +50,78 @@ cv::Mat EdgeDetectionAlg::EdgeDetectionOnCPU(std::string fileName)
 			switch (dir.at<uint8_t>(j, i))
 			{
 			case 0:
-				if (i - 1 >= 0 && i + 1 < result.cols) {
-					if (result.at<uchar>(j, i) < std::max(result.at<uchar>(j, i - 1), result.at<uchar>(j, i + 1)))
-						result.at<uchar>(j, i) = 0;
-				}
-				else if (i - 1 < 0 && i + 1 < result.cols) {
-					if (result.at<uchar>(j, i) < result.at<uchar>(j, i + 1))
-						result.at<uchar>(j, i) = 0;
-				}
-				else if (i - 1 >= 0 && i + 1 >= result.cols) {
-					if (result.at<uchar>(j, i) < result.at<uchar>(j, i - 1))
-						result.at<uchar>(j, i) = 0;
-				}
+				if (i - 1 >= 0 && i + 1 < result.cols)
+					if (result.at<double>(j, i) < std::max(result.at<double>(j, i - 1), result.at<double>(j, i + 1)))
+						result.at<double>(j, i) = 0;
+				else if (i - 1 < 0 && i + 1 < result.cols)
+					if (result.at<double>(j, i) < result.at<double>(j, i + 1))
+						result.at<double>(j, i) = 0;
+				else if (i - 1 >= 0 && i + 1 >= result.cols)
+					if (result.at<double>(j, i) < result.at<double>(j, i - 1))
+						result.at<double>(j, i) = 0;
 				break;
 			case 90:
-				if (j - 1 >= 0 && j + 1 < result.rows) {
-					if (result.at<uchar>(j, i) < std::max(result.at<uchar>(j - 1, i), result.at<uchar>(j + 1, i)))
-						result.at<uchar>(j, i) = 0;
-				}
-				else if (j - 1 < 0 && j + 1 < result.rows) {
-					if (result.at<uchar>(j, i) < result.at<uchar>(j + 1, i))
-						result.at<uchar>(j, i) = 0;
-				}
-				else if (j - 1 >= 0 && j + 1 >= result.rows) {
-					if (result.at<uchar>(j, i) < result.at<uchar>(j - 1, i))
-						result.at<uchar>(j, i) = 0;
-				}
+				if (j - 1 >= 0 && j + 1 < result.rows)
+					if (result.at<double>(j, i) < std::max(result.at<double>(j - 1, i), result.at<double>(j + 1, i)))
+						result.at<double>(j, i) = 0;
+				else if (j - 1 < 0 && j + 1 < result.rows)
+					if (result.at<double>(j, i) < result.at<double>(j + 1, i))
+						result.at<double>(j, i) = 0;
+				else if (j - 1 >= 0 && j + 1 >= result.rows)
+					if (result.at<double>(j, i) < result.at<double>(j - 1, i))
+						result.at<double>(j, i) = 0;
 				break;
 			case 45:
-				if (i - 1 >= 0 && j + 1 < result.rows && i + 1 < result.cols && j - 1 >= 0) {
-					if (result.at<uchar>(j, i) < std::max(result.at<uchar>(j + 1, i - 1), result.at<uchar>(j - 1, i + 1)))
-						result.at<uchar>(j, i) = 0;
-				}
-				else if (i - 1 >= 0 && j + 1 < result.rows && (i + 1 > result.cols || j - 1 < 0)) {
-					if (result.at<uchar>(j, i) < result.at<uchar>(j + 1, i - 1))
-						result.at<uchar>(j, i) = 0;
-				}
-				else if ((i - 1 < 0 || j + 1 >= result.rows) && i + 1 < result.cols && j - 1 >= 0) {
-					if (result.at<uchar>(j, i) < result.at<uchar>(j - 1, i + 1))
-						result.at<uchar>(j, i) = 0;
-				}
+				if (i - 1 >= 0 && j + 1 < result.rows && i + 1 < result.cols && j - 1 >= 0)
+					if (result.at<double>(j, i) < std::max(result.at<double>(j + 1, i - 1), result.at<double>(j - 1, i + 1)))
+						result.at<double>(j, i) = 0;
+				else if (i - 1 >= 0 && j + 1 < result.rows && (i + 1 > result.cols || j - 1 < 0))
+					if (result.at<double>(j, i) < result.at<double>(j + 1, i - 1))
+						result.at<double>(j, i) = 0;
+				else if ((i - 1 < 0 || j + 1 >= result.rows) && i + 1 < result.cols && j - 1 >= 0)
+					if (result.at<double>(j, i) < result.at<double>(j - 1, i + 1))
+						result.at<double>(j, i) = 0;
 				break;
 			case 135:
-				if (i - 1 >= 0 && j - 1 >= 0 && i + 1 < result.cols && j + 1 < result.rows) {
-					if (result.at<uchar>(j, i) < std::max(result.at<uchar>(j + 1, i + 1), result.at<uchar>(j - 1, i - 1)))
-						result.at<uchar>(j, i) = 0;
-				}
-				else if (i - 1 >= 0 && j - 1 >= 0 && (i + 1 > result.cols || j + 1 > result.rows)) {
-					if (result.at<uchar>(j, i) < result.at<uchar>(j - 1, i - 1))
-						result.at<uchar>(j, i) = 0;
-				}
-				else if ((i - 1 < 0 || j - 1 < 0) && i + 1 < result.cols && j + 1 < result.rows) {
-					if (result.at<uchar>(j, i) < result.at<uchar>(j + 1, i + 1))
-						result.at<uchar>(j, i) = 0;
-				}
+				if (i - 1 >= 0 && j - 1 >= 0 && i + 1 < result.cols && j + 1 < result.rows)
+					if (result.at<double>(j, i) < std::max(result.at<double>(j + 1, i + 1), result.at<double>(j - 1, i - 1)))
+						result.at<double>(j, i) = 0;
+				else if (i - 1 >= 0 && j - 1 >= 0 && (i + 1 > result.cols || j + 1 > result.rows))
+					if (result.at<double>(j, i) < result.at<double>(j - 1, i - 1))
+						result.at<double>(j, i) = 0;
+				else if ((i - 1 < 0 || j - 1 < 0) && i + 1 < result.cols && j + 1 < result.rows)
+					if (result.at<double>(j, i) < result.at<double>(j + 1, i + 1))
+						result.at<double>(j, i) = 0;
 				break;
 			}
 		}
 	}
+	image = result;
 
-	free(gaussFilter);
-
-	return result;
+	return image;
 }
 
-std::vector<cv::Mat> EdgeDetectionAlg::EdgeDetectionOnGPU(std::vector<std::string> fileNames)
+cv::Mat EdgeDetectionAlg::EdgeDetectionOnGPU(std::string fileName)
 {
-	return std::vector<cv::Mat>();
+	cv::Mat image;
+	image = cv::imread(fileName, cv::IMREAD_GRAYSCALE);
+
+	int width = image.cols;
+	int height = image.rows;
+
+	unsigned char* pixels = new unsigned char[width * height];
+	unsigned char* resultPixels = new unsigned char[width * height];
+
+	for (int x = 0; x < width; x++) {
+		for (int y = 0; y < height; y++) {
+			uchar pixel = image.at<uchar>(y, x);
+
+			pixels[width * y + x] = pixel;
+		}
+	}
+
+	resultPixels = launchKernels(pixels, width, height);
+
+	
+	return image;
 }
