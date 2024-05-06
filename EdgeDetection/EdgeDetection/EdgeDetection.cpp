@@ -1,6 +1,7 @@
 #include "EdgeDetection.h"
 #include <qfiledialog.h>
 #include <qstringlist.h>
+#include "EdgeDetectionAlg.h"
 
 EdgeDetection::EdgeDetection(QWidget *parent)
     : QWidget(parent)

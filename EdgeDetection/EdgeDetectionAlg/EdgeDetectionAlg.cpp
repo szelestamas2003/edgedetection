@@ -18,7 +18,7 @@ namespace {
 	}
 }
 
-cv::Mat EdgeDetectionAlg::EdgeDetectionOnCPU(std::string fileName)
+cv::Mat EdgeDetectionAlg::EdgeDetectionOnCPU(const std::string &fileName)
 {
 	cv::Mat image;
 	image = cv::imread(fileName, cv::IMREAD_GRAYSCALE);
@@ -101,7 +101,7 @@ cv::Mat EdgeDetectionAlg::EdgeDetectionOnCPU(std::string fileName)
 	return image;
 }
 
-cv::Mat EdgeDetectionAlg::EdgeDetectionOnGPU(std::string fileName)
+cv::Mat EdgeDetectionAlg::EdgeDetectionOnGPU(const std::string &fileName)
 {
 	cv::Mat image;
 	image = cv::imread(fileName, cv::IMREAD_GRAYSCALE);

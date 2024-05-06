@@ -7,9 +7,9 @@
 
 namespace EdgeDetectionAlg
 {
-	cv::Mat EdgeDetectionOnCPU(std::string fileName);
+	cv::Mat EdgeDetectionOnCPU(const std::string &fileName);
 
-	cv::Mat EdgeDetectionOnGPU(std::string fileName);
+	cv::Mat EdgeDetectionOnGPU(const std::string &fileName);
 };
 
 #endif EDGEDETECTIONALG_H

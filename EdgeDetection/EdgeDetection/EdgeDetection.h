@@ -7,7 +7,6 @@
 #include <qpixmap.h>
 #include <qlabel.h>
 #include <qvector.h>
-#include "EdgeDetectionAlg.h"
 
 class EdgeDetection : public QWidget
 {
