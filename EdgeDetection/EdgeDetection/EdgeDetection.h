@@ -7,6 +7,7 @@
 #include <qpixmap.h>
 #include <qlabel.h>
 #include <qvector.h>
+#include <qfuturewatcher.h>
 #include "EdgeDetectionAlg.h"
 
 class EdgeDetection : public QWidget
@@ -22,16 +23,25 @@ private slots:
     void resetButtons();
     void addImage();
     void showImage();
+    void OnEdgeDetectionCompleted();
+    void onItemProcessed(int value);
 
 private:
+    QFutureWatcher<QString> watcher;
+    EdgeDetectionAlg algorithm;
     QIcon* imageIcon = new QIcon(QPixmap(":/EdgeDetection/plus_png.png"));
     QLabel* title, *cpuTitle, *gpuTitle;
     QVector<QPushButton*> original, filteredCPU, filteredGPU;
+    QVector<QMovie*> movies, moviesCPU, moviesGPU;
     QVector<QPixmap> filteredImagesCPU, filteredImagesGPU;
     QStringList fileNames;
     QPushButton* startProccessButton, *resetButton;
     QVBoxLayout* mainLayout, * filteredCPULayout, * filteredGPULayout, *buttonLayout;
     QHBoxLayout* originalLayout, *filteredCPUImageLayout, *filteredGPUImageLayout, *headerLayout;
+
+    const QString dirPath = "temp/";
+
+    QString processItem(const QString& fileName);
 };
 
 #endif EDGEDETECTION_H
