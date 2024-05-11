@@ -33,8 +33,7 @@ private:
     QLabel* title, *cpuTitle, *gpuTitle;
     QVector<QPushButton*> original, filteredCPU, filteredGPU;
     QVector<QMovie*> movies, moviesCPU, moviesGPU;
-    QVector<QPixmap> filteredImagesCPU, filteredImagesGPU;
-    QStringList fileNames;
+    QStringList fileNames, filteredImagesCPU, filteredImagesGPU;
     QPushButton* startProccessButton, *resetButton;
     QVBoxLayout* mainLayout, * filteredCPULayout, * filteredGPULayout, *buttonLayout;
     QHBoxLayout* originalLayout, *filteredCPUImageLayout, *filteredGPUImageLayout, *headerLayout;

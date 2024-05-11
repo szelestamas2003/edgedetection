@@ -127,7 +127,27 @@ void EdgeDetection::resetButtons()
         b->setDisabled(true);
     }
 
+    for (QMovie* movie : movies) {
+        if (movie) {
+            movie->disconnect();
+            delete movie;
+        }
+    }
+    for (QMovie* movie : moviesCPU) {
+        if (movie) {
+            movie->disconnect();
+            delete movie;
+        }
+    }
+
     fileNames.clear();
+    movies.clear();
+    moviesCPU.clear();
+    filteredImagesCPU.clear();
+    QDir dir(dirPath);
+    for (QString fileName : dir.entryList()) {
+        dir.remove(fileName);
+    }
 }
 
 void EdgeDetection::addImage()
@@ -173,11 +193,13 @@ void EdgeDetection::showImage()
         window = new ImageWindow(filteredImagesGPU[index], this);
     }
     window->exec();
+    delete window;
 }
 
 void EdgeDetection::startProccess()
 {
     startProccessButton->setDisabled(true);
+    resetButton->setDisabled(true);
     watcher.setFuture(QtConcurrent::mapped(fileNames, [this](const QString& fileName) {
         return processItem(fileName);
         }));
@@ -187,6 +209,7 @@ void EdgeDetection::startProccess()
 
 void EdgeDetection::OnEdgeDetectionCompleted() {
     startProccessButton->setEnabled(true);
+    resetButton->setEnabled(true);
 }
 
 void EdgeDetection::onItemProcessed(int value)
@@ -206,6 +229,7 @@ void EdgeDetection::onItemProcessed(int value)
         }
         else
             filteredCPU[value]->setIcon(QIcon(fileName));
+        filteredImagesCPU[value] = fileName;
         filteredCPU[value]->setIconSize(filteredCPU[value]->size());
         filteredCPU[value]->setEnabled(true);
         filteredCPU[value]->setCursor(Qt::CursorShape::PointingHandCursor);

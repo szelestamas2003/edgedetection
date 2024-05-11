@@ -1,15 +1,18 @@
-#pragma once
+#ifndef IMAGEWINDOW_H
+#define IMAGEWINDOW_H
 
 #include <QDialog>
 #include <qmenubar.h>
 #include <qpixmap.h>
+#include <qmovie.h>
+#include <qfile.h>
 
 class ImageWindow : public QDialog
 {
 	Q_OBJECT
 
 public:
-	ImageWindow(QPixmap pixmap, QWidget *parent = nullptr);
+	ImageWindow(const QString &fileName, QWidget *parent = nullptr);
 	~ImageWindow();
 
 private slots:
@@ -18,5 +21,8 @@ private slots:
 private:
 	QMenuBar* mainMenu;
 	QMenu* fileMenu;
-	QPixmap pixmap;
+	QFile* file;
+	QMovie* movie;
 };
+
+#endif IMAGEWINDOW_H
