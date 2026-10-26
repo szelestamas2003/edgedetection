@@ -19,66 +19,48 @@ cv::Mat EdgeDetectionAlg::EdgeDetectionOnCPU(cv::Mat& image)
 		for (int j = 0; j < result.rows; j++) {
 			result.at<uchar>(j, i) = static_cast<uchar>(std::clamp(hypot(static_cast<double>(dx.at<uchar>(j, i)), static_cast<double>(dy.at<uchar>(j, i))), 0.0, 255.0));
 			double dirP = atan2(static_cast<double>(dy.at<uchar>(j, i)), static_cast<double>(dx.at<uchar>(j, i)));
-			if ((dirP >= 0 && dirP < 22.5) || (dirP > 157.5 && dirP <= 180))
-				dir.at<uchar>(j, i) = 0;
-			else if (dirP >= 22.5 && dirP < 67.5)
-				dir.at<uchar>(j, i) = 45;
-			else if (dirP >= 67.5 && dirP < 112.5)
-				dir.at<uchar>(j, i) = 90;
-			else
-				dir.at<uchar>(j, i) = 135;
+			dir.at<uchar>(j, i) = static_cast<uchar>(std::clamp(dirP, 0.0, 255.0));
 		}
 	}
 
+	for (int i = 1; i < result.cols - 1; i++) {
+		for (int j = 1; j < result.rows - 1; j++) {
+			double weight, magnitude1, magnitude2;
+			uchar angle = dir.at<uchar>(j, i);
+			if (angle >= 0 && angle < 45) {
+				weight = std::tan(angle);
+				magnitude1 = result.at<uchar>(j, i + 1) * (1 - weight) + result.at<uchar>(j - 1, i + 1) * weight;
+				magnitude2 = result.at<uchar>(j, i - 1) * (1 - weight) + result.at<uchar>(j + 1, i - 1) * weight;
+			} else if (angle >= 45 && angle < 90) {
+				weight = std::tan(angle);
+				magnitude1 = result.at<uchar>(j - 1, i + 1) * weight + result.at<uchar>(j - 1, i) * (1 - weight);
+				magnitude2 = result.at<uchar>(j + 1, i - 1) * weight + result.at<uchar>(j + 1, i) * (1 - weight);
+			} else if (angle >= 90 && angle < 135) {
+				weight = std::tan(angle);
+				magnitude1 = result.at<uchar>(j - 1, i - 1) * weight + result.at<uchar>(j - 1, i) * (1 - weight);
+				magnitude2 = result.at<uchar>(j + 1, i + 1) * weight + result.at<uchar>(j + 1, i) * (1 - weight);
+			} else {
+				weight = std::tan(angle);
+				magnitude1 = result.at<uchar>(j, i + 1) * (1 - weight) + result.at<uchar>(j + 1, i + 1) * weight;
+				magnitude2 = result.at<uchar>(j, i - 1) * (1 - weight) + result.at<uchar>(j - 1, i - 1) * weight;
+				
+			}
+			if (result.at<uchar>(j, i) < std::max(magnitude1, magnitude2))
+				result.at<uchar>(j, i) = 0;
+		}
+	}
+
+	float max = 0;
+	uchar lowTreshold = 45, highTreshold = 130;
+
 	for (int i = 0; i < result.cols; i++) {
 		for (int j = 0; j < result.rows; j++) {
-			switch (dir.at<uchar>(j, i))
-			{
-			case 0:
-				if (i - 1 >= 0 && i + 1 < result.cols)
-					if (result.at<uchar>(j, i) < std::max(result.at<uchar>(j, i - 1), result.at<uchar>(j, i + 1)))
-						result.at<uchar>(j, i) = 0;
-					else if (i - 1 < 0 && i + 1 < result.cols)
-						if (result.at<uchar>(j, i) < result.at<uchar>(j, i + 1))
-							result.at<uchar>(j, i) = 0;
-						else if (i - 1 >= 0 && i + 1 >= result.cols)
-							if (result.at<uchar>(j, i) < result.at<uchar>(j, i - 1))
-								result.at<uchar>(j, i) = 0;
-				break;
-			case 90:
-				if (j - 1 >= 0 && j + 1 < result.rows)
-					if (result.at<uchar>(j, i) < std::max(result.at<uchar>(j - 1, i), result.at<uchar>(j + 1, i)))
-						result.at<uchar>(j, i) = 0;
-					else if (j - 1 < 0 && j + 1 < result.rows)
-						if (result.at<uchar>(j, i) < result.at<uchar>(j + 1, i))
-							result.at<uchar>(j, i) = 0;
-						else if (j - 1 >= 0 && j + 1 >= result.rows)
-							if (result.at<uchar>(j, i) < result.at<uchar>(j - 1, i))
-								result.at<uchar>(j, i) = 0;
-				break;
-			case 45:
-				if (i - 1 >= 0 && j + 1 < result.rows && i + 1 < result.cols && j - 1 >= 0)
-					if (result.at<uchar>(j, i) < std::max(result.at<uchar>(j + 1, i - 1), result.at<uchar>(j - 1, i + 1)))
-						result.at<uchar>(j, i) = 0;
-					else if (i - 1 >= 0 && j + 1 < result.rows && (i + 1 > result.cols || j - 1 < 0))
-						if (result.at<uchar>(j, i) < result.at<uchar>(j + 1, i - 1))
-							result.at<uchar>(j, i) = 0;
-						else if ((i - 1 < 0 || j + 1 >= result.rows) && i + 1 < result.cols && j - 1 >= 0)
-							if (result.at<uchar>(j, i) < result.at<uchar>(j - 1, i + 1))
-								result.at<uchar>(j, i) = 0;
-				break;
-			case 135:
-				if (i - 1 >= 0 && j - 1 >= 0 && i + 1 < result.cols && j + 1 < result.rows)
-					if (result.at<uchar>(j, i) < std::max(result.at<uchar>(j + 1, i + 1), result.at<uchar>(j - 1, i - 1)))
-						result.at<uchar>(j, i) = 0;
-					else if (i - 1 >= 0 && j - 1 >= 0 && (i + 1 > result.cols || j + 1 > result.rows))
-						if (result.at<uchar>(j, i) < result.at<uchar>(j - 1, i - 1))
-							result.at<uchar>(j, i) = 0;
-						else if ((i - 1 < 0 || j - 1 < 0) && i + 1 < result.cols && j + 1 < result.rows)
-							if (result.at<uchar>(j, i) < result.at<uchar>(j + 1, i + 1))
-								result.at<uchar>(j, i) = 0;
-				break;
-			}
+			if (result.at<uchar>(j, i) >= highTreshold)
+				result.at<uchar>(j, i) = 255;
+			else if (result.at<uchar>(j, i) >= lowTreshold)
+				result.at<uchar>(j, i) = highTreshold;
+			else
+				result.at<uchar>(j, i) = 0;
 		}
 	}
 	return result;

@@ -1,0 +1,6 @@
+﻿<Project Sdk="WixToolset.Sdk/5.0.2">
+  <ItemGroup>
+    <ProjectReference Include="..\EdgeDetectionAlg\EdgeDetectionAlg.vcxproj" />
+    <ProjectReference Include="..\EdgeDetection\EdgeDetection.vcxproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,9 @@
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package Name="EdgeDetectionInstaller" Manufacturer="TODO Manufacturer" Version="1.0.0.0" UpgradeCode="8b0607c7-d6df-4f8e-8b5f-b14b7fac7840">
+    <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
+
+    <Feature Id="Main">
+      <ComponentGroupRef Id="ExampleComponents" />
+    </Feature>
+  </Package>
+</Wix>
